@@ -24,24 +24,25 @@ st.markdown("Clique abaixo para conectar sua carteira MetaMask:")
 
 components.html(
     """
+    <h2>Conectar com MetaMask</h2>
+    <button onclick="connectWallet()">Conectar</button>
+    <p><strong>Conta:</strong> <span id="account">Desconectada</span></p>
+
     <script>
-    async function connectWallet() {
+        async function connectWallet() {
         if (typeof window.ethereum !== 'undefined') {
             try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const account = accounts[0];
-                document.getElementById('account').innerText = account;
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const account = accounts[0];
+            document.getElementById('account').innerText = account;
             } catch (error) {
-                document.getElementById('account').innerText = "Erro: " + error.message;
+            document.getElementById('account').innerText = "Erro: " + error.message;
             }
         } else {
-            document.getElementById('account').innerText = "MetaMask não encontrada";
+            alert("MetaMask não detectada. Instale a extensão.");
         }
-    }
-    </script>
-    <button onclick="connectWallet()">Conectar MetaMask</button>
-    <p><strong>Conta:</strong> <span id="account">Não conectada</span></p>
-    """,
+        }
+    </script>""",
     height=150,
 )
 
