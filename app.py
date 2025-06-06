@@ -36,10 +36,12 @@ async () => {
 
 if account is None:
     st.warning("MetaMask não detectada. Verifique se está instalada.")
-elif account.startswith("Erro"):
+elif isinstance(account, str) and account.startswith("Erro"):
     st.error(account)
-else:
+elif isinstance(account, str):
     st.success(f"Conectado como: `{account}`")
+else:
+    st.warning(f"Valor inesperado retornado: {account}")
 
 
 # # ✅ Adicionar Produto
