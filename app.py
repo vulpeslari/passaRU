@@ -16,27 +16,30 @@ with open("abi.txt", "r", encoding="utf-8") as abi_file:
 
 contract = w3.eth.contract(address=contract_address, abi=abi)
 
+st.set_page_config(page_title="PASSARU", layout="centered")
 st.title("PASSARU")
 
-# JS para pedir conexão MetaMask e retornar a conta
-if st.button("Conectar / Atualizar conta MetaMask"):
-    connect_code = """
-    async () => {
-        if (typeof window.ethereum !== 'undefined') {
+account = st_javascript("""
+async () => {
+    if (typeof window.ethereum !== 'undefined') {
+        try {
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             return accounts[0];
-        } else {
-            return null;
+        } catch (err) {
+            return "Erro: " + err.message;
         }
+    } else {
+        return null;
     }
-    """
-    account = st_javascript(connect_code)
-    if account:
-        st.success(f"Conectado como: `{account}`")
-    else:
-        st.warning("MetaMask não detectada ou conexão recusada")
+}
+""")
+
+if account is None:
+    st.warning("MetaMask não detectada. Verifique se está instalada.")
+elif account.startswith("Erro"):
+    st.error(account)
 else:
-    st.write("Clique no botão para conectar/atualizar a conta MetaMask")
+    st.success(f"Conectado como: `{account}`")
 
 
 # # ✅ Adicionar Produto
