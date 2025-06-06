@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_javascript import st_javascript
 from web3 import Web3
 import json
+import streamlit.components.v1 as components
 
 # Configura provider Sepolia
 provider_url = "https://sepolia.infura.io/v3/95b9df5d95cc4190bf94c2d7f9ddef2f"
@@ -19,29 +20,30 @@ contract = w3.eth.contract(address=contract_address, abi=abi)
 st.set_page_config(page_title="PASSARU", layout="centered")
 st.title("PASSARU")
 
-account = st_javascript("""
-async () => {
-    if (typeof window.ethereum !== 'undefined') {
-        try {
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            return accounts[0];
-        } catch (err) {
-            return "Erro: " + err.message;
-        }
-    } else {
-        return null;
-    }
-}
-""")
+st.markdown("Clique abaixo para conectar sua carteira MetaMask:")
 
-if account is None:
-    st.warning("MetaMask não detectada. Verifique se está instalada.")
-elif isinstance(account, str) and account.startswith("Erro"):
-    st.error(account)
-elif isinstance(account, str):
-    st.success(f"Conectado como: `{account}`")
-else:
-    st.warning(f"Valor inesperado retornado: {account}")
+components.html(
+    """
+    <script>
+    async function connectWallet() {
+        if (typeof window.ethereum !== 'undefined') {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const account = accounts[0];
+                document.getElementById('account').innerText = account;
+            } catch (error) {
+                document.getElementById('account').innerText = "Erro: " + error.message;
+            }
+        } else {
+            document.getElementById('account').innerText = "MetaMask não encontrada";
+        }
+    }
+    </script>
+    <button onclick="connectWallet()">Conectar MetaMask</button>
+    <p><strong>Conta:</strong> <span id="account">Não conectada</span></p>
+    """,
+    height=150,
+)
 
 
 # # ✅ Adicionar Produto
