@@ -83,9 +83,8 @@ function ScannerStudent() {
                     setStudentAccount(found.account);
                     setScanning(false);
 
-                    localStorage.setItem('authName', found.name);
-                    localStorage.setItem('authAddress', found.address);
-                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('name', found.name);
+                    localStorage.setItem('address', found.account);
 
                     video.srcObject.getTracks().forEach(track => track.stop());
                 } else {

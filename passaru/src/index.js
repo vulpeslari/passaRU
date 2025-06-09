@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import './index.css';
-import PrivateRoute from './PrivateRoute';
+import PrivateRoute from './services/PrivateRoute';
 import App from './components/App';
 import Header from './components/header';
 import Connect from './components/connect';

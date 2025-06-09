@@ -4,9 +4,8 @@ import './header.css';
 
 function Header() {
     function clearAuthData() {
-        localStorage.removeItem('authName');
-        localStorage.removeItem('authAddress');
-        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('name');
+        localStorage.removeItem('address');
         window.location.href = '/';
     }
 
