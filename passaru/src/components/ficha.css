@@ -1,0 +1,27 @@
+.card-container {
+    background-color: var(--medium);
+    border-radius: .3rem;
+    padding: .5rem 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.card-container h2 {
+    font-size: 20px;
+    margin-bottom: -.5rem;
+}
+
+.card-container p {
+    font-size: 14px;
+}
+
+.card-container .icon {
+    margin-right: 1rem;
+    font-size: 30px;
+}
+
+.card-container h3 {
+    margin: 0 .5rem 0 auto;
+    padding: .5rem;
+    border-radius: .3rem;
+}

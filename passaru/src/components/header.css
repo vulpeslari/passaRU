@@ -1,0 +1,26 @@
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -1rem;
+}
+
+.header-container h1 {
+  cursor: pointer;
+}
+
+.icon {
+  margin: 0 .2rem -.1rem 0;
+}
+
+.header-container a {
+  text-decoration: none;
+  color: var(--light);
+  background-color: var(--medium);
+  padding: .3rem .8rem;
+  border-radius: .3rem;
+  font-size: 14px;
+}
+.header-container a:hover {
+  color: var(--primary);
+}
