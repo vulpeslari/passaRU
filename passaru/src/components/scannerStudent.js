@@ -2,13 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Web3 from 'web3';
 import abi from '../abi.json';
-import App from './App';
 
 import './scanner.css';
 
 import { LuScanBarcode } from "react-icons/lu";
 
-const CONTRACT_ADDRESS = '0x01330446DC6E17550B3F1F70C67d4E29438ee836';
+const CONTRACT_ADDRESS = '0x3F3C392BC29DfABb15Cb8a51c3df37745AEC2702';
 
 function ScannerStudent() {
     const videoRef = useRef(null);
@@ -61,7 +60,7 @@ function ScannerStudent() {
         const imageData = canvas.toDataURL('image/png');
 
         try {
-            const response = await fetch('http://localhost:5000/scan', {
+            const response = await fetch('http://127.0.0.1:8000/scan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ image: imageData }),

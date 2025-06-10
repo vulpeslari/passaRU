@@ -12,16 +12,17 @@ import { GiChickenOven } from "react-icons/gi";
 import { MdFastfood } from "react-icons/md";
 import { MdSoupKitchen } from "react-icons/md";
 
-const CONTRACT_ADDRESS = "0x841d0E3AbE4432aC8d7cbc99171d4a1D9538f959";
+const CONTRACT_ADDRESS = "0x611f46872b31B3b490158A45A9919E498eE25Dec";
 
 function App() {
   const location = useLocation();
-  const name = localStorage.getItem('authName');
-  const address = localStorage.getItem('authAddress');
+  const name = localStorage.getItem('name');
+  const address = localStorage.getItem('address');
   const now = new Date();
   const currentHour = now.getHours();
   const [account, setAccount] = useState(null);
   const [web3, setWeb3] = useState(null);
+  
 
   const fichas = [
     {
@@ -30,7 +31,8 @@ function App() {
       name: "Desjejum",
       hourStart: 7,
       hourEnd: 9,
-      price: 0.80
+      price: 0.80,
+      priceWei: "52632000000000"
     },
     {
       id: 1,
@@ -38,7 +40,8 @@ function App() {
       name: "Almoço",
       hourStart: 11,
       hourEnd: 14,
-      price: 1.80
+      price: 1.80,
+      priceWei: "118421000000000"
     },
     {
       id: 2,
@@ -46,7 +49,8 @@ function App() {
       name: "Lanche",
       hourStart: 15,
       hourEnd: 18,
-      price: 0.80
+      price: 0.80,
+      priceWei: "52632000000000"
     },
     {
       id: 3,
@@ -54,7 +58,8 @@ function App() {
       name: "Jantar",
       hourStart: 18,
       hourEnd: 20,
-      price: 1.80
+      price: 1.80,
+      priceWei: "118421000000000"
     }
   ].map(ficha => ({
     ...ficha,
@@ -102,7 +107,7 @@ function App() {
 
       await contract.methods.purchaseFicha(ficha.id).send({
         from: connectedAccount,
-        value: web3.utils.toWei(ficha.price.toString(), 'ether'),
+        value: ficha.priceWei,
       });
 
       alert("Ficha de " + ficha.name + " comprada com sucesso!");

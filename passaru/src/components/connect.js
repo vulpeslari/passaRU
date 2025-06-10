@@ -6,7 +6,7 @@ import { IoLogInSharp } from "react-icons/io5";
 import { MdOutlineSync } from "react-icons/md";
 
 import abi from '../abi.json';
-const CONTRACT_ADDRESS = "0x841d0E3AbE4432aC8d7cbc99171d4a1D9538f959"; 
+const CONTRACT_ADDRESS = "0x611f46872b31B3b490158A45A9919E498eE25Dec"; 
 
 function Connect() {
     const [account, setAccount] = useState(null);
