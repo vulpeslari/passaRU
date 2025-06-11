@@ -2,9 +2,11 @@ import React from 'react';
 import Web3 from 'web3';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
-import Ficha from './ficha.js';
+import 'react-toastify/dist/ReactToastify.css';
 import './app.css';
+import Ficha from './ficha.js';
 import abi from '../abi.json';
 
 import { BiSolidCoffee } from "react-icons/bi";
@@ -22,7 +24,7 @@ function App() {
   const currentHour = now.getHours();
   const [account, setAccount] = useState(null);
   const [web3, setWeb3] = useState(null);
-  
+
 
   const fichas = [
     {
@@ -89,17 +91,11 @@ function App() {
 
   const handleSubmit = async (ficha) => {
     try {
-      // Pega as contas conectadas no MetaMask 
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       const connectedAccount = accounts[0].toLowerCase();
 
       if (connectedAccount !== address.toLowerCase()) {
-        alert("A carteira conectada não corresponde ao endereço cadastrado para este aluno.");
-        return; // para aqui, não faz a compra
-      }
-
-      if (!web3) {
-        alert("MetaMask não está conectado.");
+        toast.error("Carteira não corresponde ao aluno cadastrado!");
         return;
       }
 
@@ -110,15 +106,54 @@ function App() {
         value: ficha.priceWei,
       });
 
-      alert("Ficha de " + ficha.name + " comprada com sucesso!");
+      toast.success(`Ficha de ${ficha.name} comprada com sucesso!`);
+
     } catch (error) {
-      console.error("Erro ao comprar ficha:", error);
+      //console.log(extractErrorMessage(error));
+      toast.error(`Erro na compra. Verifique se o aluno já comprou essa ficha hoje.`); // Toast de erro com 8 segundos
     }
   };
+
+  // Função para extrair a mensagem de erro do revert
+  function extractErrorMessage(error) {
+    // Padrão para mensagens de require (MetaMask/Viem)
+    const requirePattern = /reason="([^"]*)"|reverted with reason string '([^']*)'/;
+    const matches = error.message.match(requirePattern);
+
+    if (matches) {
+      // Retorna a mensagem capturada (pode estar no grupo 1 ou 2 da regex)
+      return matches[1] || matches[2];
+    }
+
+    // Erros comuns da MetaMask (saldo insuficiente, gas limit, etc)
+    if (error.message.includes("Ficha indisponivel.")) {
+      return "Horário indisponível para compra de fichas.";
+    }
+    if (error.message.includes("Ficha ja comprada.")) {
+      return "Você já comprou essa ficha hoje.";
+    }
+    if (error.message.includes("Saldo insuficiente.")) {
+      return "Valor insuficiente para realizar a compra.";
+    }
+
+    // Fallback: Mostra o erro original (útil para debugging)
+    return "Erro na transação: " + (error.reason || error.message.slice(0, 100));
+  }
 
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <div className='hello'>
         <h1>Olá, {name}!</h1>
         <h2>Veja as fichas disponíveis para hoje.</h2>
@@ -135,16 +170,16 @@ function App() {
             price={ficha.price}
           />
         ))}
-        {fichas.some(ficha => ficha.available) && (
-          <div className='confirm'>
-            {fichas.filter(ficha => ficha.available).map((ficha, idx) => (
-              <button key={idx} onClick={() => handleSubmit(ficha)}>
-                Confirmar compra
-              </button>
-            ))}
-          </div>
-        )}
       </div>
+      {fichas.some(ficha => ficha.available) && (
+        <div className='confirm'>
+          {fichas.filter(ficha => ficha.available).map((ficha, idx) => (
+            <button key={idx} onClick={() => handleSubmit(ficha)}>
+              Confirmar compra
+            </button>
+          ))}
+        </div>
+      )}
     </>
   );
 }

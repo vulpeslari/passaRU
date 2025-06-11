@@ -1,12 +1,16 @@
 import React from 'react'
-import './connect.css'
-import { useEffect, useState } from 'react';
 import Web3 from 'web3';
+import { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+
+import './connect.css';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { IoLogInSharp } from "react-icons/io5";
 import { MdOutlineSync } from "react-icons/md";
 
 import abi from '../abi.json';
-const CONTRACT_ADDRESS = "0x611f46872b31B3b490158A45A9919E498eE25Dec"; 
+const CONTRACT_ADDRESS = "0x611f46872b31B3b490158A45A9919E498eE25Dec";
 
 function Connect() {
     const [account, setAccount] = useState(null);
@@ -104,7 +108,7 @@ function Connect() {
         const id = e.target.matricula.value;
 
         if (!web3 || !account) {
-            alert("Conecte-se à MetaMask primeiro.");
+            toast.alert(`Conecte-se à MetaMask primeiro.`);
             return;
         }
 
@@ -113,14 +117,59 @@ function Connect() {
 
             await contract.methods.addStudent(id, name, account).send({ from: account });
 
-            alert("Aluno cadastrado com sucesso!");
+            toast.success(`Aluno ${name} conectado com sucesso!`);
         } catch (error) {
-            console.error("Erro ao adicionar aluno:", error);
+            //console.log(extractErrorMessage(error));
+            toast.error(`Erro no cadastramento. Verifique se a carteirinha já não foi cadastrada.`); // Toast de erro com 8 segundos
         }
     };
 
+    // Função para extrair a mensagem de erro do revert
+    function extractErrorMessage(error) {
+        // Verifica se é um erro de revert com mensagem explícita (Solidity/require)
+        if (error.reason) {
+            return error.reason;
+        }
+
+        // Padrões para mensagens de erro em diferentes provedores (MetaMask, Hardhat, etc)
+        const errorPatterns = [
+            /reason="([^"]+)"/,                     // MetaMask/Web3
+            /reverted with reason string '([^']+)'/, // Hardhat/viem
+            /revert: (.*?)(?=\")/,                  // Outros provedores
+            /Error: (.*?)(?=\n)/,                   // Erros gerais
+            /message":"([^"]+)"/                    // Erros estruturados (ex: Ethers)
+        ];
+
+        // Testa cada padrão contra a mensagem de erro
+        for (const pattern of errorPatterns) {
+            const match = error.message?.match(pattern);
+            if (match && match[1]) {
+                return match[1];
+            }
+        }
+
+        // Erros comuns da MetaMask (saldo insuficiente, gas limit, etc)
+        if (error.message.includes("Aluno ja cadastrado.")) {
+            return "Aluno com esta carteirinha já cadastrado.";
+        }
+
+        // Fallback: Mostra o erro original (útil para debugging)
+        return "Erro no cadastro: " + (error.reason || error.message.slice(0, 100));
+    }
+
     return (
         <>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <form className='connect-form' onSubmit={handleSubmit}>
                 <h1>Conecte sua conta Metamask</h1>
                 <fieldset>
